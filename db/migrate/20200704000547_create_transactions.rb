@@ -3,7 +3,7 @@ class CreateTransactions < ActiveRecord::Migration[6.0]
     create_table :transactions do |t|
       t.string :uuid
       t.integer :order_id
-      t.double :amount
+      t.float :amount
       t.integer :transaction_type
       t.integer :account_type
       t.string :from_CPF

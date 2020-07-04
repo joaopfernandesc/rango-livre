@@ -7,8 +7,8 @@ class CreateUsers < ActiveRecord::Migration[6.0]
       t.string :CPF
       t.string :name
       t.string :phone_number
-      t.double :regular_balance
-      t.double :meal_allowance_balance
+      t.float :regular_balance
+      t.float :meal_allowance_balance
 
       t.timestamps
       t.datetime :deleted_at
