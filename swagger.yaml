@@ -357,6 +357,8 @@ paths:
           $ref: "#/components/responses/BadParameters"
   /transactions/{uuid}:
     delete:
+      tags:
+        - Transações
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/uuid"
