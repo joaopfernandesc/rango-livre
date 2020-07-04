@@ -3,6 +3,7 @@
 class Transaction < ApplicationRecord
 	acts_as_paranoid
 	before_create :set_uuid
+	validates :amount, :transaction_type, :account_type, :from_CPF, :to_CPF, :scheduled, presence: true
 
 	def set_uuid
 		self.uuid = SecureRandom.uuid
@@ -23,7 +24,8 @@ class Transaction < ApplicationRecord
 		if !from_user.nil?
 			from_user = {
 				uuid: from_user[:uuid],
-				name: from_user[:name]
+				name: from_user[:name],
+				CPF: from_user[:CPF]
 			}
 		end
 

@@ -239,7 +239,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateTransaction"
+              allOf:
+                - $ref: "#/components/schemas/CreateTransaction"
+                - type: object
+                  properties:
+                    from_CPF:
+                      type: string
+                      description: Quem está pagando
+                - required:
+                  - amount
+                  - transaction_type
+                  - account_type
+                  - from_CPF
+                  - to_CPF
+                  - scheduled
       responses:
         '201':
           description: Ok
@@ -251,6 +264,23 @@ paths:
                     properties:
                       uuid:
                         type: string
+                      order:
+                        description: Se essa transação foi gerado por um pedido, as informações serão exibidas
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          restaurant:
+                            type: string
+                      from_user:
+                        type: object
+                        properties:
+                          uuid:
+                            type: string
+                          name:
+                            type: string
+                          CPF: 
+                            type: string
                   - $ref: "#/components/schemas/CreateTransaction"
                   - required:
                     - amount
@@ -300,6 +330,15 @@ paths:
                                   type: string
                                 restaurant:
                                   type: string
+                            from_user:
+                              type: object
+                              properties:
+                                uuid:
+                                  type: string
+                                name:
+                                  type: string
+                                CPF: 
+                                  type: string
                         - $ref: "#/components/schemas/CreateTransaction"
                   offset:
                     type: number
@@ -312,6 +351,24 @@ paths:
           $ref: "#/components/responses/GenericError"
         '401':
           $ref: "#/components/responses/UnauthorizedOperation"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/BadParameters"
+  /transactions/{uuid}:
+    delete:
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/uuid"
+      responses:
+        '204':
+          description: No content
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '401':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '403':
+          description: Forbidden
         '404':
           $ref: "#/components/responses/NotFound"
         "422":
@@ -501,13 +558,10 @@ components:
           description: Quantidade de dinheiro
         transaction_type:
           type: number
-          description: 0 para entrada por transferência 1 para saída 2 para entrada pelo próprio usuário
+          description: 0 para entrada; 1 para saída.
         account_type:
           type: number
-          description: 0 para conta comum 1 para vale refeição
-        from_CPF:
-          type: string
-          description: Quem está pagando
+          description: 0 para conta comum; 1 para vale-refeição;
         to_CPF:
           type: string
           description: Quem está recebendo
@@ -517,6 +571,7 @@ components:
         timestamp:
           type: integer
           description: Timestamp epoch em segundos do momento que essa transação tem que ocorrer (UTC)
+      
   parameters:
     city:
       name: city
