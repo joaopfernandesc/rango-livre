@@ -1,0 +1,513 @@
+openapi: "3.0.0"
+info:
+  version: "0.0.1"
+  title: Mega Hack 3a edição API
+  license:
+    name: MIT
+paths:
+  /sessions:
+    post:
+      tags:
+        - Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required: 
+                - email
+                - password
+      responses:
+        '200':
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  expire_timestamp:
+                    type: integer 
+                    description: Timestamp em UTC de expiração deste token.
+  /products:
+    get:
+      tags:
+        - Produtos
+      summary: Lista os produtos
+      parameters:
+        - $ref: "#/components/parameters/city"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Products"
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/CreateProduct"
+                - type: object
+                  properties:
+                    image:
+                      description: Imagem do produto
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+      summary: Insere um novo produto
+      tags:
+        - Produtos
+      responses:
+        '201':
+          description: Criado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '403':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '422':
+          $ref: "#/components/responses/BadParameters"
+  /products/{uuid}:
+    parameters:
+      - $ref: "#/components/parameters/Authorization"
+      - $ref: "#/components/parameters/uuid"
+    get:
+      summary: Exibe detalhes de um produto.
+      tags:
+        - Produtos
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '403':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '422':
+          $ref: "#/components/responses/BadParameters"
+    delete:
+      summary: Remove um produto
+      tags:
+        - Produtos
+      responses:
+        '200':
+          description: Ok.
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '403':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '422':
+          $ref: "#/components/responses/BadParameters"
+  /user:
+    post:
+      tags:
+        - Usuário
+      summary: Cria um novo usuário.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUser"
+      responses:
+        '201':
+          description: Criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  teste:
+                    type: integer
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '403':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '422':
+          $ref: "#/components/responses/BadParameters"
+  /user/{uuid}:
+    get:
+      description: Pega informações do usuário
+      parameters:
+        - $ref: "#/components/parameters/uuid"
+      tags:
+        - Usuário
+      responses:
+        '200':
+          description: Ok.        
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      uuid:
+                        type: string
+                  - $ref: "#/components/schemas/CreateUser"
+                  - type: object
+                    properties:
+                      meal_allowance_balance:
+                        type: number
+                      regular_balance:
+                        type: number
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '403':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/BadParameters"
+  /transactions:
+    post:
+      tags:
+        - Transações
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+      summary: Cria uma transação
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTransaction"
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      uuid:
+                        type: string
+                  - $ref: "#/components/schemas/CreateTransaction"
+                  - required:
+                    - amount
+                    - transaction_type
+                    - account_type
+                    - to_CPF
+                    - scheduled
+                    - timestamp
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '403':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/BadParameters"
+    get:
+      summary: Pega as últimas transações do usuário
+      description: Mostra as transações do usuário que fez a requisição. Serão enviadas da mais nova à mais antiga, incluindo agendamentos previstos.
+      tags:
+        - Transações
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      allOf:
+                        - type: object
+                          properties:
+                            uuid:
+                              type: string
+                            order:
+                              description: Se essa transação foi gerado por um pedido, as informações serão exibidas
+                              type: object
+                              properties:
+                                uuid:
+                                  type: string
+                                restaurant:
+                                  type: string
+                        - $ref: "#/components/schemas/CreateTransaction"
+                  offset:
+                    type: number
+                  limit:
+                    type: number
+                  total:
+                    type: number
+                    description: Total de transações para este usuário
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '403':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/BadParameters"
+  /orders:
+    post:
+      summary: Submete um pedido
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+      tags:
+        - Pedidos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrder"
+      responses:
+        '201':
+          description: Criado.
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '403':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/BadParameters"
+    get:
+      summary: Lista os pedidos
+      tags:
+        - Pedidos
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      description: Lista os últimos pedidos feitos
+      responses:
+        '200':
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Orders"
+        '400':
+          $ref: "#/components/responses/GenericError"
+        '403':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/BadParameters"
+components:
+  responses: 
+    GenericError:
+      description: Erro genérico.
+    UnauthorizedOperation:
+      description: Usuário não autorizado.
+    InternalServerError:
+      description: Erro interno do servidor
+    NotFound:
+      description: Não encontrado
+    BadParameters:
+      description: Parâmetros incorretos
+  schemas:
+    CreateUser:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        CPF:
+          type: string
+        name:
+          type: string
+        phone_number:
+          type: string
+        addresses:
+          type: array
+          items:
+            type: object
+            properties:
+              nickname:
+                type: string
+                description: Nome dado ao local pelo usuário
+              street:
+                type: string
+              number:
+                type: string
+              description:
+                type: string
+              CEP:
+                type: string
+              city:
+                type: string
+              uf:
+                type: string
+    CreateOrder:
+      type: object
+      properties:
+        products_id:
+          type: array
+          items:
+            type: number
+        total_price:
+          type: number
+    CreateProduct:
+      type: object 
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        actual_price:
+          type: integer
+        regular_price:
+          type: integer
+        discount:
+          type: integer
+          description: "Desconto no produto."
+        description:
+          type: string
+          description: "Descrição do produto."
+        restaurant:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Nome do restaurante
+            uuid: 
+              type: string
+              description: Identificador único universal do restaurante
+        min_estimative:
+          type: integer
+        max_estimative:
+          type: integer
+        city:
+          type: string
+    Orders:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            type: object
+            properties:
+              uuid:
+                type: string
+              name: 
+                type: string
+              price:
+                type: integer
+              restaurant:
+                type: string
+              created_at:
+                type: integer
+                description: Timestamp epoch em segundos (UTC)
+    Product:
+      allOf:
+        - type: object
+          properties:
+            uuid:
+              type: string
+            image_url:
+              type: string
+              description: "Link para a imagem"
+        - $ref: '#/components/schemas/CreateProduct'
+    Products:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+              $ref: "#/components/schemas/Product"
+        offset:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+          description: Total de produtos disponíveis
+    CreateTransaction:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Quantidade de dinheiro
+        transaction_type:
+          type: number
+          description: 0 para entrada por transferência 1 para saída 2 para entrada pelo próprio usuário
+        account_type:
+          type: number
+          description: 0 para conta comum 1 para vale refeição
+        from_CPF:
+          type: string
+          description: Quem está pagando
+        to_CPF:
+          type: string
+          description: Quem está recebendo
+        scheduled:
+          type: boolean
+          description: Sinaliza se é um agendamento
+        timestamp:
+          type: integer
+          description: Timestamp epoch em segundos do momento que essa transação tem que ocorrer (UTC)
+  parameters:
+    city:
+      name: city
+      schema:
+        type: string
+      in: query
+      required: true
+    offsetParam:
+      name: offset
+      in: query
+      required: true
+      description: Offset de resultados.
+      schema:
+        type: string
+    limitParam:
+      name: limit
+      description: Limite de resultados.
+      in: query
+      required: true
+      schema:
+        type: string
+    uuid:
+      name: uuid
+      in: path
+      required: true
+      description: Identificador universal único
+      schema:
+        type: string
+    Authorization:
+      name: Authorization
+      in: header
+      required: true
+      description: Token de autenticação
+      schema:
+        type: string
+# Added by API Auto Mocking Plugin
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/joaofernandes/ReservableUnits/v0.1
