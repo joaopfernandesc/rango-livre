@@ -26,7 +26,7 @@ class TransactionsController < ApplicationController
 				
 			end
 			
-			render json: {transaction.json_object}, status: 201
+			render json: {transaction: transaction.json_object}, status: 201
 		rescue RangoLivreExceptions::NotFound
 			render json: { error: 'User not found' }, status: 404
 		rescue RangoLivreExceptions::CreateConflict
