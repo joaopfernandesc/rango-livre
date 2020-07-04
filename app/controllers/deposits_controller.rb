@@ -16,11 +16,12 @@ class DepositsController < ApplicationController
           responsible_id: @user[:id]
         )
 
+        Rails.logger.info transaction.errors.messages
         raise RangoLivreExceptions::CreateConflict if !transaction.valid?
       end
 
       render json: { user: @user.json_object }
-    rescue RangoLivreException::CreateConflict
+    rescue RangoLivreExceptions::CreateConflict
       render json: { error: 'Conflict'}, status: 409
     rescue RangoLivreExceptions::BadParameters
       render json: {error: 'Bad parameters'}, status: 422
