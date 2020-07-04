@@ -27,8 +27,8 @@ class ApplicationController < ActionController::API
 
   def logged_in_user
     if decoded_token
-      uuid = decoded_token[0]['uui']
-      @user = User.find_by(uuid: user_id)
+      uuid = decoded_token[0]['uuid']
+      @user = User.find_by(uuid: uuid)
     end
   end
 
@@ -37,6 +37,6 @@ class ApplicationController < ActionController::API
   end
 
   def authorized
-    render json: { message: 'Please log in' }, status: :unauthorized unless logged_in?
+    render json: { message: 'Unauthorized token' }, status: :unauthorized unless logged_in?
   end
 end
