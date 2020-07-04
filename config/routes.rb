@@ -7,6 +7,6 @@ Rails.application.routes.draw do
   resources :products
   resources :transactions
   resources :orders
-  resources :create, only: [:create]
-  resources :deposit, only: [:create]
+  resources :ratings, only: [:create]
+  resources :deposits, only: [:create]
 end
