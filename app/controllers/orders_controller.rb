@@ -34,7 +34,7 @@ class OrdersController < ApplicationController
           |x| 
           {
             product_id: x[:id],
-            quantity: (params[:products].select { |y| y[:uuid] == x[:uuid] }).first[:quantity]
+            quantity: (params[:products].select { |y| y[:uuid] == x[:uuid] }).first[:quantity],
             order_id: order[:id]
           }
         }
