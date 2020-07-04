@@ -65,6 +65,6 @@ class ProductsController < ApplicationController
 	private
 	
 	def create_params
-		params.permit(:image, :name, :category, :actual_price, :restaurant, :regular_price, :discount, :description,  :min_estimative, :max_estimative, :city)
+		params.permit(:image, :name, :category, :actual_price, :restaurant, :regular_price, :discount, :description,  :min_estimative, :max_estimative, :city, :delivery_fare)
 	end
 end

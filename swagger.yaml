@@ -487,9 +487,11 @@ components:
         name:
           type: string
         actual_price:
-          type: integer
+          type: number
         regular_price:
-          type: integer
+          type: number
+        delivery_fare:
+          type: number
         discount:
           type: integer
           description: "Desconto no produto."

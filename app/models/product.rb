@@ -3,7 +3,7 @@ class Product < ApplicationRecord
 	mount_uploader :image, ProductUploader
 	before_create :set_uuid
 
-	validates :image, :name, :category, :actual_price, :regular_price, :discount, :min_estimative, :max_estimative, :city, :restaurant, presence: true
+	validates :image, :delivery_fare, :name, :category, :actual_price, :regular_price, :discount, :min_estimative, :max_estimative, :city, :restaurant, presence: true
 
 	def set_uuid
 		self.uuid = SecureRandom.uuid
@@ -22,6 +22,7 @@ class Product < ApplicationRecord
 			min_estimative: min_estimative,
 			max_estimative: max_estimative,
 			city: city,
+			delivery_fare: delivery_fare,
 			average_rating: average_rating,
 			total_ratings: total_ratings
 		}
