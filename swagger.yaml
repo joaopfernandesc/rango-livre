@@ -126,27 +126,25 @@ paths:
                 $ref: "#/components/schemas/Product"
         '400':
           $ref: "#/components/responses/GenericError"
-        '401':
-          $ref: "#/components/responses/UnauthorizedOperation"
         '404':
           $ref: "#/components/responses/NotFound"
         '422':
           $ref: "#/components/responses/BadParameters"
-    delete:
-      summary: Remove um produto
-      tags:
-        - Produtos
-      responses:
-        '200':
-          description: Ok.
-        '400':
-          $ref: "#/components/responses/GenericError"
-        '401':
-          $ref: "#/components/responses/UnauthorizedOperation"
-        '404':
-          $ref: "#/components/responses/NotFound"
-        '422':
-          $ref: "#/components/responses/BadParameters"
+    # delete:
+    #   summary: Remove um produto
+    #   tags:
+    #     - Produtos
+    #   responses:
+    #     '200':
+    #       description: Ok.
+    #     '400':
+    #       $ref: "#/components/responses/GenericError"
+    #     '401':
+    #       $ref: "#/components/responses/UnauthorizedOperation"
+    #     '404':
+    #       $ref: "#/components/responses/NotFound"
+    #     '422':
+    #       $ref: "#/components/responses/BadParameters"
   /users:
     post:
       tags:
@@ -409,8 +407,6 @@ components:
       properties:
         name:
           type: string
-        category:
-          type: string
         actual_price:
           type: integer
         regular_price:
@@ -455,7 +451,7 @@ components:
           properties:
             uuid:
               type: string
-            image_url:
+            image:
               type: string
               description: "Link para a imagem"
         - $ref: '#/components/schemas/CreateProduct'
@@ -479,6 +475,8 @@ components:
         total:
           type: integer
           description: Total de produtos disponíveis
+        city:
+          type: string
     CreateTransaction:
       type: object
       properties:
