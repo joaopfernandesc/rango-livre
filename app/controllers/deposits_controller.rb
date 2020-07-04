@@ -16,7 +16,7 @@ class DepositsController < ApplicationController
         )
       end
 
-      render json: { @user.json_object }
+      render json: { user: @user.json_object }
     rescue => e
       Rails.logger.error e.message
       Rails.logger.error e.backtrace.join("\n")
