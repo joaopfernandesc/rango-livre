@@ -3,28 +3,29 @@ class TransactionsController < ApplicationController
 		begin
 			transaction = Transaction.new(create_transaction_params)
 			raise RangoLivreExceptions::BadParameters if (!transaction.valid?) || (params[:scheduled] == true && timestamp.nil?)
-			user = User.find_by(CPF: params[:to_CPF])
-			check_if_enough_funds(user) if params[:transaction_type].to_i == 1 
-			params.permit(:amount)
-			Transaction.transaction do
-				transaction.save!
-				raise RangoLivreExceptions::NotFound if user.nil?
-				if params[:transaction_type] == 0
-					amount = params[:amount]
-				elsif params[:transaction_type] == 1
-					amount = - params[:amount]
-				else
-					raise RangoLivreExceptions::BadParameters
-				end
-				if params[:account_type] == 0
-					user.update(regular_balance: user[:regular_balance] + amount)
-				elsif params[:account_type] == 1
-					user.update(regular_balance: user[:meal_allowance_balance] + amount)
-				else
-					raise RangoLivreExceptions::BadParameters
-				end
+			# user = User.find_by(CPF: params[:to_CPF])
+			# check_if_enough_funds(user) if params[:transaction_type].to_i == 1 
+			# params.permit(:amount)
+			# Transaction.transaction do
+			# 	transaction[:responsible_id] = @user[:id]
+			# 	transaction.save!
+			# 	raise RangoLivreExceptions::NotFound if user.nil?
+			# 	if params[:transaction_type] == 0
+			# 		amount = params[:amount]
+			# 	elsif params[:transaction_type] == 1
+			# 		amount = - params[:amount]
+			# 	else
+			# 		raise RangoLivreExceptions::BadParameters
+			# 	end
+			# 	if params[:account_type] == 0
+			# 		user.update(regular_balance: user[:regular_balance] + amount)
+			# 	elsif params[:account_type] == 1
+			# 		user.update(regular_balance: user[:meal_allowance_balance] + amount)
+			# 	else
+			# 		raise RangoLivreExceptions::BadParameters
+			# 	end
 				
-			end
+			# end
 			
 			render json: {transaction: transaction.json_object}, status: 201
 		rescue RangoLivreExceptions::NotFound
@@ -101,6 +102,10 @@ class TransactionsController < ApplicationController
 		else
 			raise RangoLivreExceptions::BadParameters
 		end
+	end
+	
+	def create_transaction_params
+		params.permit(:amount, :transaction_type, :account_type, :from_CPF, :to_CPF, :scheduled, :timestamp)
 	end
 	
     

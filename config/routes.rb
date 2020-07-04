@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   resources :transactions
   resources :orders
   resources :create, only: [:create]
+  resources :deposit, only: [:create]
 end
