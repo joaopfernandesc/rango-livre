@@ -25,4 +25,6 @@ test:
 
 production:
   <<: *default
-  database: <%= ENV['DATABASE_NAME'] %>
+  database: rango_livre
+  username: rango_livre
+  password: <%= ENV['DATABASE_PASSWORD'] %>

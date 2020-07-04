@@ -56,9 +56,12 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
       zeitwerk (~> 2.2, >= 2.2.2)
+<<<<<<< HEAD
     acts_as_paranoid (0.6.3)
       activerecord (>= 4.2, < 7.0)
       activesupport (>= 4.2, < 7.0)
+=======
+>>>>>>> c3c948a38185baa9c9d95acf919b8a80c7fa3505
     bootsnap (1.4.6)
       msgpack (~> 1.0)
     builder (3.2.4)
@@ -87,7 +90,10 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.14.1)
     msgpack (1.3.3)
+<<<<<<< HEAD
     mysql2 (0.5.3)
+=======
+>>>>>>> c3c948a38185baa9c9d95acf919b8a80c7fa3505
     nio4r (2.5.2)
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
@@ -137,6 +143,10 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+<<<<<<< HEAD
+=======
+    sqlite3 (1.4.2)
+>>>>>>> c3c948a38185baa9c9d95acf919b8a80c7fa3505
     thor (1.0.1)
     thread_safe (0.3.6)
     tzinfo (1.2.7)
@@ -150,15 +160,25 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+<<<<<<< HEAD
   acts_as_paranoid
   bootsnap (>= 1.4.2)
   byebug
   listen (~> 3.2)
   mysql2
+=======
+  bootsnap (>= 1.4.2)
+  byebug
+  listen (~> 3.2)
+>>>>>>> c3c948a38185baa9c9d95acf919b8a80c7fa3505
   puma (~> 4.1)
   rails (~> 6.0.3, >= 6.0.3.2)
   spring
   spring-watcher-listen (~> 2.0.0)
+<<<<<<< HEAD
+=======
+  sqlite3 (~> 1.4)
+>>>>>>> c3c948a38185baa9c9d95acf919b8a80c7fa3505
   tzinfo-data
 
 RUBY VERSION
