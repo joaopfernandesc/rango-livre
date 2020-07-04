@@ -8,17 +8,17 @@ class User < ApplicationRecord
   validates :name, :CPF, :phone_number, :email, presence: true
 
   def json_object
-    addresses = UserAddress.where(user_id: id).map(&:json_object)
+    addresses = UserAddress.where(user_id: id).map {|x| x.json_object}
 
     {
-      uuid: uuid,
-      email: email,
+      uuid: self.uuid,
+      email: self.email,
       CPF: self.CPF,
-      name: name,
-      phone_number: phone_number,
+      name: self.name,
+      phone_number: self.phone_number,
       addresses: addresses,
-      meal_allowance_balance: meal_allowance_balance,
-      regular_balance: regular_balance
+      meal_allowance_balance: self.meal_allowance_balance,
+      regular_balance: self.regular_balance
     }
   end
 

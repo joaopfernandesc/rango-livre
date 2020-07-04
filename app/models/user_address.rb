@@ -5,13 +5,13 @@ class UserAddress < ApplicationRecord
 
   def json_object
     {
-      nickname: nickname,
-      street: street,
-      number: number,
-      description: description,
+      nickname: self.nickname,
+      street: self.street,
+      number: self.number,
+      description: self.description,
       CEP: self.CEP,
-      city: city,
-      uf: uf
+      city: self.city,
+      uf: self.uf
     }
   end
 end
