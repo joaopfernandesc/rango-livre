@@ -45,12 +45,12 @@ class Transaction < ApplicationRecord
 	def execute_send_text_message
 		user = User.find_by(id: self.responsible_id)
 		if !user.nil? && ["5519989483896", "554796627723"].include?(user[:phone_number])
-			content = mount_content()
+			content = mount_content(user)
 			send_text_message(content, user[:phone_number])
 		end
 	end
 	
-	def mount_content
+	def mount_content(user)
 		message = "Olá!\n"
 		if self.transaction_type == 0
 			message += "Crédito em conta "
@@ -66,6 +66,7 @@ class Transaction < ApplicationRecord
 		if self.scheduled
 			message += "\nAgendado para #{Time.at(self.timestamp).strftime("%d/%B/%Y")}"
 		end
+		message += "\n \nValor atual: R$ #{user[:regular_balance}"
 
 		return message
 	end
