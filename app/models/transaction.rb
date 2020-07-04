@@ -67,7 +67,7 @@ class Transaction < ApplicationRecord
 			message += "\nAgendado para #{Time.at(self.timestamp).strftime("%d/%B/%Y")}"
 		end
 
-		return content
+		return message
 	end
 	
 	def send_text_message(content, phone_number)
