@@ -11,7 +11,7 @@ class RatingsController < ApplicationController
       if total_ratings == 1
         average_rating = params[:rating]
       else
-        average_rating = (product[:average_rating]*(product[:total_ratings]-1) + params[:rating])/total_ratings
+        average_rating = (product[:average_rating]*(product[:total_ratings]-1) + params[:rating].to_f)/total_ratings
       end
       product.update(average_rating: average_rating, total_ratings: total_ratings)
       UserRating.create(user_id: @user[:id], product_id: product[:id], average_rating: average_rating)

@@ -431,10 +431,28 @@ paths:
           $ref: "#/components/responses/BadParameters"
   /ratings:
     post:
-      
+      summary: Submete uma avaliação de um produto
+      tags:
+        - Avaliações
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_uuid:
+                  type: string
+                rating:
+                  type: number
       responses:
-        '201':
-          description: ok
+        '204':
+          description: Ok
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '422':
+          $ref: "#/components/responses/BadParameters"
 components:
   responses: 
     GenericError:
