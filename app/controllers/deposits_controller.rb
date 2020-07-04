@@ -6,17 +6,24 @@ class DepositsController < ApplicationController
       amount = params[:amount]
       Transaction.transaction do
         @user.update(regular_balance: @user[:regular_balance] + amount)
-        Transaction.create(
+        transaction = Transaction.create(
           amount: amount,
           transaction_type: 0,
           account_type: 0,
           from_CPF: @user[:CPF],
           to_CPF: @user[:CPF],
-          scheduled: false
+          scheduled: false,
+          responsible_id: @user[:id]
         )
+
+        raise RangoLivreExceptions::CreateConflict if !transaction.valid?
       end
 
       render json: { user: @user.json_object }
+    rescue RangoLivreException::CreateConflict
+      render json: { error: 'Conflict'}, status: 409
+    rescue RangoLivreExceptions::BadParameters
+      render json: {error: 'Bad parameters'}, status: 422
     rescue => e
       Rails.logger.error e.message
       Rails.logger.error e.backtrace.join("\n")
