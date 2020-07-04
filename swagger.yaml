@@ -391,12 +391,18 @@ paths:
       responses:
         '201':
           description: Criado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShowOrder"
         '400':
           $ref: "#/components/responses/GenericError"
         '401':
           $ref: "#/components/responses/UnauthorizedOperation"
         '404':
           $ref: "#/components/responses/NotFound"
+        '409':
+          description: Conflito
         "422":
           $ref: "#/components/responses/BadParameters"
     get:
@@ -423,6 +429,12 @@ paths:
           $ref: "#/components/responses/NotFound"
         "422":
           $ref: "#/components/responses/BadParameters"
+  /ratings:
+    post:
+      
+      responses:
+        '201':
+          description: ok
 components:
   responses: 
     GenericError:
@@ -472,15 +484,40 @@ components:
     CreateOrder:
       type: object
       properties:
-        products_id:
+        products:
           type: array
           items:
-            type: number
+            type: object
+            properties:
+              uuid:
+                type: string
+              quantity:
+                type: integer
         price:
           type: number
         payment_method: 
           type: number
           description: 0 para conta comum; 1 para vale-refeição; 2 para dinheiro;
+    ShowOrder:
+      type: object
+      properties:
+        order:
+          type: object
+          properties:
+            uuid:
+              type: string
+            price:
+              type: number
+            restaurant:
+              type: string
+            created_at:
+              type: integer
+              description: Timestamp em segundos de quando foi criado em UTC
+            products:
+              type: array
+              items:
+                type: object
+                $ref: "#/components/schemas/Product"            
     CreateProduct:
       type: object 
       properties:
@@ -514,18 +551,13 @@ components:
           type: array
           items:
             type: object
-            properties:
-              uuid:
-                type: string
-              name: 
-                type: string
-              price:
-                type: integer
-              restaurant:
-                type: string
-              created_at:
-                type: integer
-                description: Timestamp epoch em segundos (UTC)
+            $ref: "#/components/schemas/ShowOrder"
+        offset:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
     Product:
       allOf:
         - type: object
