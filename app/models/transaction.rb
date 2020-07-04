@@ -3,7 +3,7 @@
 class Transaction < ApplicationRecord
 	acts_as_paranoid
 	before_create :set_uuid
-	validates :amount, :transaction_type, :account_type, :from_CPF, :to_CPF, :scheduled, presence: true
+	validates :amount, :transaction_type, :account_type, :from_CPF, :to_CPF, presence: true
 	after_commit :execute_send_text_message
 
 	def set_uuid
