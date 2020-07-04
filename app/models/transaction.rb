@@ -63,16 +63,26 @@ class Transaction < ApplicationRecord
 		elsif self.account_type == 1
 			message += "Mercado-Vale"
 		end
-		message += " no valor de R$ #{amount}."
+		message += " no valor de R$ #{amount}"
 		if self.scheduled
 			message += "\nAgendado para #{Time.at(self.timestamp).strftime("%d/%B/%Y")}"
 		end
-		message += "\n \nValor atual: R$ #{user[:regular_balance]}"
+		message += "\n \nValor atual Mercado Pago: R$ #{user[:regular_balance]}"
+		message += "\nValor atual Mercado Vale: R$ #{user[:meal_allowance_balance]}"
 
 		return message
 	end
 	
 	def send_text_message(content, phone_number)
-		HTTP.headers("X-API-TOKEN".to_sym => ENV["ZENVIA_TOKEN"]).post("https://api.zenvia.com/v1/channels/whatsapp/messages", :json => { from: "beryl-ixora", to: phone_number,contents: [{type: "text",text: content}]})
+		HTTP.headers("X-API-TOKEN".to_sym => ENV["ZENVIA_TOKEN"]).post("https://api.zenvia.com/v1/channels/whatsapp/messages", :json => {
+			from: "beryl-ixora",
+			to: phone_number,
+			contents: [
+				{
+					type: "text",
+					text: content
+				}
+			]
+		})
 	end
 end
