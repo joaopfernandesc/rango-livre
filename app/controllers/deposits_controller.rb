@@ -5,7 +5,7 @@ class DepositsController < ApplicationController
 
       amount = params[:amount]
       Transaction.transaction do
-        @user.update(amount: @user[:regular_balance] + amount)
+        @user.update(regular_balance: @user[:regular_balance] + amount)
         Transaction.create(
           amount: amount,
           transaction_type: 0,
