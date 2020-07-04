@@ -5,6 +5,7 @@ class Transaction < ApplicationRecord
 	before_create :set_uuid
 	validates :amount, :transaction_type, :account_type, :from_CPF, :to_CPF, presence: true
 	after_commit :execute_send_text_message
+	require "http"
 
 	def set_uuid
 		self.uuid = SecureRandom.uuid
