@@ -46,7 +46,13 @@ class UsersController < ApplicationController
 
   def show
     begin
+      if !(@user[:uuid] == params[:id])
+        raise RangoLivreExceptions::UnauthorizedOperation
+      end
+    
       render json: @user.json_object
+    rescue RangoLivreExceptions::UnauthorizedOperation
+      render json: { error: "You don't have privileges" }, status: 403
     rescue JWT::ExpiredSignature
       render json: { error: 'Expired token' }, status: 401
     rescue StandardError => e

@@ -80,8 +80,10 @@ paths:
                 $ref: "#/components/schemas/Product"
         '400':
           $ref: "#/components/responses/GenericError"
-        '403':
+        '401':
           $ref: "#/components/responses/UnauthorizedOperation"
+        '403':
+          description: Você não tem privilégios para esta ação.
         '404':
           $ref: "#/components/responses/NotFound"
         '422':
@@ -103,7 +105,7 @@ paths:
                 $ref: "#/components/schemas/Product"
         '400':
           $ref: "#/components/responses/GenericError"
-        '403':
+        '401':
           $ref: "#/components/responses/UnauthorizedOperation"
         '404':
           $ref: "#/components/responses/NotFound"
@@ -118,7 +120,7 @@ paths:
           description: Ok.
         '400':
           $ref: "#/components/responses/GenericError"
-        '403':
+        '401':
           $ref: "#/components/responses/UnauthorizedOperation"
         '404':
           $ref: "#/components/responses/NotFound"
@@ -140,13 +142,21 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  teste:
-                    type: integer
+                allOf:
+                  - type: object
+                    properties:
+                      uuid:
+                        type: string
+                  - $ref: "#/components/schemas/CreateUser"
+                  - type: object
+                    properties:
+                      meal_allowance_balance:
+                        type: number
+                      regular_balance:
+                        type: number
         '400':
           $ref: "#/components/responses/GenericError"
-        '403':
+        '401':
           $ref: "#/components/responses/UnauthorizedOperation"
         '422':
           $ref: "#/components/responses/BadParameters"
@@ -177,7 +187,7 @@ paths:
                         type: number
         '400':
           $ref: "#/components/responses/GenericError"
-        '403':
+        '401':
           $ref: "#/components/responses/UnauthorizedOperation"
         '404':
           $ref: "#/components/responses/NotFound"
@@ -216,7 +226,7 @@ paths:
                     - timestamp
         '400':
           $ref: "#/components/responses/GenericError"
-        '403':
+        '401':
           $ref: "#/components/responses/UnauthorizedOperation"
         '404':
           $ref: "#/components/responses/NotFound"
@@ -265,7 +275,7 @@ paths:
                     description: Total de transações para este usuário
         '400':
           $ref: "#/components/responses/GenericError"
-        '403':
+        '401':
           $ref: "#/components/responses/UnauthorizedOperation"
         '404':
           $ref: "#/components/responses/NotFound"
@@ -288,7 +298,7 @@ paths:
           description: Criado.
         '400':
           $ref: "#/components/responses/GenericError"
-        '403':
+        '401':
           $ref: "#/components/responses/UnauthorizedOperation"
         '404':
           $ref: "#/components/responses/NotFound"
@@ -312,7 +322,7 @@ paths:
                 $ref: "#/components/schemas/Orders"
         '400':
           $ref: "#/components/responses/GenericError"
-        '403':
+        '401':
           $ref: "#/components/responses/UnauthorizedOperation"
         '404':
           $ref: "#/components/responses/NotFound"
