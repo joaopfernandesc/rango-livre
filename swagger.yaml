@@ -28,13 +28,34 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                  expire_timestamp:
-                    type: integer 
-                    description: Timestamp em UTC de expiração deste token.
+                allOf:
+                  - type: object
+                    properties:
+                      token:
+                        type: string
+                      expire_timestamp:
+                        type: integer 
+                        description: Timestamp em UTC de expiração deste token.
+                  - type: object
+                    properties:
+                      user:
+                        type: object
+                        allOf:
+                          - type: object
+                            properties: 
+                              uuid:
+                                type: string
+                          - $ref: "#/components/schemas/CreateUser"
+                          - type: object
+                            properties:
+                              meal_allowance_balance:
+                                type: number
+                              regular_balance:
+                                type: number
+        '401':
+          $ref: "#/components/responses/UnauthorizedOperation"
+        '422':
+          $ref: "#/components/responses/BadParameters"
   /products:
     get:
       tags:
@@ -126,7 +147,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         '422':
           $ref: "#/components/responses/BadParameters"
-  /user:
+  /users:
     post:
       tags:
         - Usuário
@@ -160,7 +181,7 @@ paths:
           $ref: "#/components/responses/UnauthorizedOperation"
         '422':
           $ref: "#/components/responses/BadParameters"
-  /user/{uuid}:
+  /users/{uuid}:
     get:
       description: Pega informações do usuário
       parameters:
@@ -401,14 +422,8 @@ components:
           type: string
           description: "Descrição do produto."
         restaurant:
-          type: object
-          properties:
-            name:
-              type: string
-              description: Nome do restaurante
-            uuid: 
-              type: string
-              description: Identificador único universal do restaurante
+          type: string
+          description: Nome do restaurante
         min_estimative:
           type: integer
         max_estimative:
@@ -444,6 +459,12 @@ components:
               type: string
               description: "Link para a imagem"
         - $ref: '#/components/schemas/CreateProduct'
+        - type: object
+          properties:
+            average_rating:
+              type: string
+            total_ratings:
+              type: integer
     Products:
       type: object
       properties:
