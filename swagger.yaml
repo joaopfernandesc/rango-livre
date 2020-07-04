@@ -357,6 +357,7 @@ paths:
           $ref: "#/components/responses/BadParameters"
   /transactions/{uuid}:
     delete:
+      summary: Cancela agendamentos
       tags:
         - Transações
       parameters:
@@ -475,8 +476,11 @@ components:
           type: array
           items:
             type: number
-        total_price:
+        price:
           type: number
+        payment_method: 
+          type: number
+          description: 0 para conta comum; 1 para vale-refeição; 2 para dinheiro;
     CreateProduct:
       type: object 
       properties:

@@ -7,4 +7,5 @@ module RangoLivreExceptions
   class NotFound < RangoLivreException; end
   class UnauthorizedOperation < RangoLivreException; end
   class CreateConflict < RangoLivreException; end
+  class Forbidden < RangoLivreException; end
 end

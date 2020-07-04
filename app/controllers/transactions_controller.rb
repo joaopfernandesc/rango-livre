@@ -4,14 +4,22 @@ class TransactionsController < ApplicationController
 			transaction = Transaction.new(create_transaction_params)
 			raise RangoLivreExceptions::BadParameters if (!transaction.valid?) || (params[:scheduled] == true && timestamp.nil?)
 			user = User.find_by(CPF: params[:to_CPF])
-			raise RangoLivreExceptions::CreateConflict if params[:transaction_type] == 1 && check_if_enough_funds(user)
+			check_if_enough_funds(user) if params[:transaction_type].to_i == 1 
+			params.permit(:amount)
 			Transaction.transaction do
 				transaction.save!
 				raise RangoLivreExceptions::NotFound if user.nil?
 				if params[:transaction_type] == 0
-					user.update(amount: user[:amount] + params[:amount].to_f)
+					amount = params[:amount]
 				elsif params[:transaction_type] == 1
-					user.update(amount: user[:amount] - params[:amount].to_f)
+					amount = - params[:amount]
+				else
+					raise RangoLivreExceptions::BadParameters
+				end
+				if params[:account_type] == 0
+					user.update(regular_balance: user[:regular_balance] + amount)
+				elsif params[:account_type] == 1
+					user.update(regular_balance: user[:meal_allowance_balance] + amount)
 				else
 					raise RangoLivreExceptions::BadParameters
 				end
@@ -81,10 +89,17 @@ class TransactionsController < ApplicationController
 	private
 	
 	def check_if_enough_funds(user)
-		if user[:amount] >= params[:amount].to_f
-			return true
+		case params[:account_type].to_i
+		when 0
+			if !(user[:regular_balance] >= params[:amount])
+				raise RangoLivreExceptions::CreateConflict
+			end
+		when 1
+			if !(user[:meal_allowance_balance] >= params[:amount])
+				raise RangoLivreExceptions::CreateConflict
+			end
 		else
-			return false
+			raise RangoLivreExceptions::BadParameters
 		end
 	end
 	
