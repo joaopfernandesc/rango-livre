@@ -87,6 +87,17 @@ paths:
                   properties:
                     image:
                       description: Imagem do produto
+                - required:
+                  - image
+                  - name
+                  - category
+                  - actual_price
+                  - regular_price
+                  - discount
+                  - min_estimative
+                  - max_estimative
+                  - city
+                  - restaurant
       parameters:
         - $ref: "#/components/parameters/Authorization"
       summary: Insere um novo produto
@@ -111,7 +122,6 @@ paths:
           $ref: "#/components/responses/BadParameters"
   /products/{uuid}:
     parameters:
-      - $ref: "#/components/parameters/Authorization"
       - $ref: "#/components/parameters/uuid"
     get:
       summary: Exibe detalhes de um produto.
@@ -154,7 +164,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateUser"
+              allOf:
+                - $ref: "#/components/schemas/CreateUser"
+                - required:
+                  - CPF
+                  - email
+                  - name
+                  - phone_number
       responses:
         '201':
           description: Criado com sucesso
