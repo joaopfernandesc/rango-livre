@@ -1,8 +1,9 @@
 class OrdersController < ApplicationController
   def create
     begin
-      raise RangoLivreExceptions::BadParameters if params[:price].nil? || params[:products_id].nil?
-      price = params[:price].permit
+      raise RangoLivreExceptions::BadParameters if params[:price].nil? || params[:products].nil?
+      params.permit(:price, :payment_method)
+      price = params[:price]
       uuid_products = params[:products].map { |x| x[:uuid]}
       products = Product.where(uuid: uuid_products)
 
@@ -11,18 +12,20 @@ class OrdersController < ApplicationController
 
       restaurant_name = products.first[:restaurant]
 
-      order = Order.new(price: price, user_uuid: @user[:uuid], restaurant_name: restaurant_name)
+      order = Order.new(price: price, user_uuid: @user[:uuid], restaurant: restaurant_name)
       Order.transaction do
         raise RangoLivreExceptions::BadParameters if !order.valid?
+
+        Rails.logger.info order.inspect
         order.save!
         case params[:payment_method].to_i
         when 0          
-          raise RangoLivreExceptions::CreateConflict if params[:price] > user[:regular_balance]
-          Transaction.create(order_id: order[:id], amount: price, transaction_type: 1, account_type: params[:payment_method].permit, from_CPF: @user[:CPF], to_CPF: "0", timestamp: Time.now.to_i)
+          raise RangoLivreExceptions::CreateConflict if params[:price] > @user[:regular_balance]
+          Transaction.create(order_id: order[:id], amount: price, transaction_type: 1, account_type: params[:payment_method], from_CPF: @user[:CPF], to_CPF: "0", timestamp: Time.now.to_i)
           @user.update(regular_balance: @user[:regular_balance] - price)
         when 1          
-          raise RangoLivreExceptions::CreateConflict if params[:price] > user[:meal_allowance_balance]
-          Transaction.create(order_id: order[:id], amount: price, transaction_type: 1, account_type: params[:payment_method].permit, from_CPF: @user[:CPF], to_CPF: "0", timestamp: Time.now.to_i)
+          raise RangoLivreExceptions::CreateConflict if params[:price] > @user[:meal_allowance_balance]
+          Transaction.create(order_id: order[:id], amount: price, transaction_type: 1, account_type: params[:payment_method], from_CPF: @user[:CPF], to_CPF: "0", timestamp: Time.now.to_i)
           @user.update(meal_allowance_balance: @user[:meal_allowance_balance] - price)
         when 2
           # Do nothing

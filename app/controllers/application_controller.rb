@@ -16,7 +16,6 @@ class ApplicationController < ActionController::API
   def decoded_token
     if auth_header
       token = auth_header.split(' ')[1]
-      Rails.logger.info token
       JWT.decode(token, ENV['SECRET_JWT'], true, algorithm: 'HS256')
     end
   end
