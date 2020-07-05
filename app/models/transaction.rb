@@ -5,7 +5,7 @@ class Transaction < ApplicationRecord
 	before_create :set_uuid
 	validates :amount, :transaction_type, :account_type, :from_CPF, :to_CPF, presence: true
 	enum account_type: { "Mercado Pago": 0, "Mercado Vale": 1 }
-	enuum transaction_type: { "Crédito": 0, "Débito": 1 }
+	enum transaction_type: { "Crédito": 0, "Débito": 1 }
 	after_commit :execute_send_text_message
 	require "http"
 
