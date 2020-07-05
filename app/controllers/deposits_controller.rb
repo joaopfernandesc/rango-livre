@@ -1,4 +1,6 @@
 class DepositsController < ApplicationController
+  before_action :authenticated
+
   def create
     begin
       params.permit(:amount)
