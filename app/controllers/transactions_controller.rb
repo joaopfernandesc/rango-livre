@@ -6,32 +6,32 @@ class TransactionsController < ApplicationController
 			from_user = @user
 			check_if_enough_funds(from_user)
 
-
+			params.permit(:account_type)
 			from_transaction = Transaction.new(create_transaction_params)
-			to_transaction = Transaction.new(amount: params[:amount], transaction_type: 0, to_CPF: params[:to_CPF], scheduled: params[:scheduled], timestamp: params[:timestamp], from_CPF: @user[:CPF])
+			to_transaction = Transaction.new(amount: params[:amount], account_type: params[:account_type], transaction_type: 0, to_CPF: params[:to_CPF], scheduled: params[:scheduled], timestamp: params[:timestamp], from_CPF: @user[:CPF])
 			
 			Transaction.transaction do
+				from_transaction[:account_type] = 0
 				from_transaction[:responsible_id] = from_user[:id]
 				from_transaction[:from_CPF] = from_user[:CPF]
 				from_transaction[:transaction_type] = 1
 				to_transaction[:responsible_id] = to_user[:id]
 				to_transaction[:from_CPF] = from_user[:CPF]
-				to_transaction[:transaction_type] = 0
-				
+
 				raise RangoLivreExceptions::BadParameters if (!to_transaction.valid?) || (params[:scheduled] == "true" && params[:timestamp].nil?)
 				to_transaction.save!
 				from_transaction.save!
-				from_user.update(regular_balance: user[:regular_balance] - params[:amount].to_f)
-				if params[:account_type].to_i = 0
-					to_user.update(regular_balance: user[:regular_balance] + params[:amount].to_f)
-				elsif params[:account_type].to_i = 1
-					to_user.update(meal_allowance_balance: user[:meal_allowance_balance] + params[:amount].to_f)
+				from_user.update(regular_balance: @user[:regular_balance] - params[:amount].to_f)
+				if (params[:account_type]).to_i == 0
+					to_user.update(regular_balance: to_user[:regular_balance] + params[:amount].to_f)
+				elsif (params[:account_type]).to_i == 1
+					to_user.update(meal_allowance_balance: to_user[:meal_allowance_balance] + params[:amount].to_f)
 				else
 					raise RangoLivreExceptions::BadParameters
 				end
 			end
 			
-			render json: {transaction: transaction.json_object}, status: 201
+			render json: {transaction: from_transaction.json_object}, status: 201
 		rescue RangoLivreExceptions::NotFound
 			render json: { error: 'User not found' }, status: 404
 		rescue RangoLivreExceptions::CreateConflict
@@ -100,7 +100,7 @@ class TransactionsController < ApplicationController
 	end
 	
 	def create_transaction_params
-		params.permit(:amount, :account_type, :to_CPF, :scheduled, :timestamp)
+		params.permit(:amount, :to_CPF, :scheduled, :timestamp)
 	end
 	
     
