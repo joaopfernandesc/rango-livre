@@ -21,6 +21,8 @@ class DepositsController < ApplicationController
       end
 
       render json: { user: @user.json_object }
+    rescue JWT::ExpiredSignature
+      render json: { error: 'Expired token' }, status: 401
     rescue RangoLivreExceptions::CreateConflict
       render json: { error: 'Conflict'}, status: 409
     rescue RangoLivreExceptions::BadParameters
