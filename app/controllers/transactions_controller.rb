@@ -1,33 +1,34 @@
 class TransactionsController < ApplicationController
 	def create
 		begin
-			transaction = Transaction.new(create_transaction_params)
+			from_transaction = Transaction.new(create_transaction_params)
+			to_transaction = Transaction.new(amount: params[:amount], transaction_type: 0, to_CPF: params[:to_CPF], scheduled: params[:scheduled], timestamp: params[:timestamp])
 			raise RangoLivreExceptions::BadParameters if (!transaction.valid?) || (params[:scheduled] == true && timestamp.nil?)
 
-			
-			# user = User.find_by(CPF: params[:to_CPF])
-			# check_if_enough_funds(user) if params[:transaction_type].to_i == 1 
-			# params.permit(:amount)
-			# Transaction.transaction do
-			# 	transaction[:responsible_id] = @user[:id]
-			# 	transaction.save!
-			# 	raise RangoLivreExceptions::NotFound if user.nil?
-			# 	if params[:transaction_type] == 0
-			# 		amount = params[:amount]
-			# 	elsif params[:transaction_type] == 1
-			# 		amount = - params[:amount]
-			# 	else
-			# 		raise RangoLivreExceptions::BadParameters
-			# 	end
-			# 	if params[:account_type] == 0
-			# 		user.update(regular_balance: user[:regular_balance] + amount)
-			# 	elsif params[:account_type] == 1
-			# 		user.update(regular_balance: user[:meal_allowance_balance] + amount)
-			# 	else
-			# 		raise RangoLivreExceptions::BadParameters
-			# 	end
-				
-			# end
+			to_user = User.find_by(CPF: params[:to_CPF])
+			raise RangoLivreExceptions::NotFound if to_user.nil?
+			from_user = @user
+			check_if_enough_funds(from_user)
+
+			Transaction.transaction do
+				from_transaction[:responsible_id] = from_user[:id]
+				from_transaction[:from_CPF] = from_user[:CPF]
+				from_transaction[:transaction_type] = 1
+				to_transaction[:responsible_id] = to_user[:id]
+				to_transaction[:from_CPF] = from_user[:CPF]
+				to_transaction[:transaction_type] = 0
+
+				to_transaction.save!
+				from_transaction.save!
+				from_user.update(regular_balance: user[:regular_balance] - params[:amount].to_f)
+				if params[:account_type] = 0
+					to_user.update(regular_balance: user[:regular_balance] + params[:amount].to_f)
+				elsif 
+					to_user.update(meal_allowance_balance: user[:meal_allowance_balance] + params[:amount].to_f)
+				else
+					raise RangoLivreExceptions::BadParameters
+				end
+			end
 			
 			render json: {transaction: transaction.json_object}, status: 201
 		rescue RangoLivreExceptions::NotFound
@@ -92,22 +93,13 @@ class TransactionsController < ApplicationController
 	private
 	
 	def check_if_enough_funds(user)
-		case params[:account_type].to_i
-		when 0
-			if !(user[:regular_balance] >= params[:amount])
-				raise RangoLivreExceptions::CreateConflict
-			end
-		when 1
-			if !(user[:meal_allowance_balance] >= params[:amount])
-				raise RangoLivreExceptions::CreateConflict
-			end
-		else
-			raise RangoLivreExceptions::BadParameters
+		if !(user[:regular_balance] >= params[:amount])
+			raise RangoLivreExceptions::CreateConflict
 		end
 	end
 	
 	def create_transaction_params
-		params.permit(:amount, :transaction_type, :account_type, :from_CPF, :to_CPF, :scheduled, :timestamp)
+		params.permit(:amount, :account_type, :to_CPF, :scheduled, :timestamp)
 	end
 	
     

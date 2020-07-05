@@ -241,16 +241,10 @@ paths:
             schema:
               allOf:
                 - $ref: "#/components/schemas/CreateTransaction"
-                - type: object
-                  properties:
-                    from_CPF:
-                      type: string
-                      description: Quem está pagando
                 - required:
                   - amount
                   - transaction_type
                   - account_type
-                  - from_CPF
                   - to_CPF
                   - scheduled
       responses:
@@ -330,6 +324,9 @@ paths:
                                   type: string
                                 restaurant:
                                   type: string
+                            transaction_type:
+                              type: string
+                              description: Indica Crédito ou Débito
                             from_user:
                               type: object
                               properties:
@@ -632,12 +629,9 @@ components:
         amount:
           type: number
           description: Quantidade de dinheiro
-        transaction_type:
-          type: number
-          description: 0 para entrada; 1 para saída.
         account_type:
           type: number
-          description: 0 para conta comum; 1 para vale-refeição;
+          description: "Tipo da conta de destino. Enviar 0 para o backend para Mercado Pago e 1 para Mercado Vale. O backend vai retornar as strings Mercado Pago e Mercado Vale, respectivamente"
         to_CPF:
           type: string
           description: Quem está recebendo

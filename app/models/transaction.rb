@@ -4,6 +4,8 @@ class Transaction < ApplicationRecord
 	acts_as_paranoid
 	before_create :set_uuid
 	validates :amount, :transaction_type, :account_type, :from_CPF, :to_CPF, presence: true
+	enum account_type: { "Mercado Pago": 0, "Mercado Vale": 1 }
+	enuum transaction_type: { "Crédito": 0, "Débito": 1 }
 	after_commit :execute_send_text_message
 	require "http"
 
@@ -45,7 +47,7 @@ class Transaction < ApplicationRecord
 	end
 	def execute_send_text_message
 		user = User.find_by(id: self.responsible_id)
-		if !user.nil? && ["5519989483896", "554796627723"].include?(user[:phone_number])
+		if !user.nil?
 			content = mount_content(user)
 			send_text_message(content, user[:phone_number])
 		end
@@ -61,7 +63,7 @@ class Transaction < ApplicationRecord
 		if self.account_type == 0
 			message += "Mercado Pago"
 		elsif self.account_type == 1
-			message += "Mercado-Vale"
+			message += "Mercado Vale"
 		end
 		message += " no valor de R$ #{amount}"
 		if self.scheduled
