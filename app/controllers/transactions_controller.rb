@@ -3,7 +3,7 @@ class TransactionsController < ApplicationController
 		begin
 			from_transaction = Transaction.new(create_transaction_params)
 			to_transaction = Transaction.new(amount: params[:amount], transaction_type: 0, to_CPF: params[:to_CPF], scheduled: params[:scheduled], timestamp: params[:timestamp])
-			raise RangoLivreExceptions::BadParameters if (!transaction.valid?) || (params[:scheduled] == true && timestamp.nil?)
+			raise RangoLivreExceptions::BadParameters if (!to_transaction.valid?) || (params[:scheduled] == true && timestamp.nil?)
 
 			to_user = User.find_by(CPF: params[:to_CPF])
 			raise RangoLivreExceptions::NotFound if to_user.nil?
