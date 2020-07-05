@@ -1,15 +1,15 @@
 class TransactionsController < ApplicationController
 	def create
 		begin
-			from_transaction = Transaction.new(create_transaction_params)
-			to_transaction = Transaction.new(amount: params[:amount], transaction_type: 0, to_CPF: params[:to_CPF], scheduled: params[:scheduled], timestamp: params[:timestamp])
-			raise RangoLivreExceptions::BadParameters if (!to_transaction.valid?) || (params[:scheduled] == true && timestamp.nil?)
-
 			to_user = User.find_by(CPF: params[:to_CPF])
 			raise RangoLivreExceptions::NotFound if to_user.nil?
 			from_user = @user
 			check_if_enough_funds(from_user)
 
+
+			from_transaction = Transaction.new(create_transaction_params)
+			to_transaction = Transaction.new(amount: params[:amount], transaction_type: 0, to_CPF: params[:to_CPF], scheduled: params[:scheduled], timestamp: params[:timestamp], from_CPF: @user[:CPF])
+			
 			Transaction.transaction do
 				from_transaction[:responsible_id] = from_user[:id]
 				from_transaction[:from_CPF] = from_user[:CPF]
@@ -17,7 +17,8 @@ class TransactionsController < ApplicationController
 				to_transaction[:responsible_id] = to_user[:id]
 				to_transaction[:from_CPF] = from_user[:CPF]
 				to_transaction[:transaction_type] = 0
-
+				
+				raise RangoLivreExceptions::BadParameters if (!to_transaction.valid?) || (params[:scheduled] == true && timestamp.nil?)
 				to_transaction.save!
 				from_transaction.save!
 				from_user.update(regular_balance: user[:regular_balance] - params[:amount].to_f)
