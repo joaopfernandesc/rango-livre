@@ -3,6 +3,8 @@ class DepositsController < ApplicationController
 
   def create
     begin
+      raise RangoLivreExceptions::BadParameters if params[:amount].nil?
+
       params.permit(:amount)
       
       raise RangoLivreExceptions::UnauthorizedOperation if @user.nil?
@@ -24,6 +26,8 @@ class DepositsController < ApplicationController
       end
 
       render json: { user: @user.json_object }
+    rescue RangoLivreExceptions::BadParameters
+      render json: { error: 'Bad parameters' }, status: 422
     rescue RangoLivreExceptions::UnauthorizedOperation
       render json: { error: 'Unauthorized token' }, status: 401
     rescue JWT::ExpiredSignature
