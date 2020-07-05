@@ -20,7 +20,7 @@ class ProductsController < ApplicationController
 		begin
 			raise RangoLivreExceptions::BadParameters if (params[:offset].nil? || params[:limit].nil? || params[:city].nil?)
 
-			city = params[:city].gsub(/[^0-9A-Za-z]/, '')
+			city = params[:city]
 			offset = params[:offset]
 			limit = params[:limit]
 
