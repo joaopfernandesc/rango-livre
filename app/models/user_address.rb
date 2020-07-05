@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UserAddress < ApplicationRecord
-	validates :nickname, :street, :number, :CEP, :city, :uf, presence: true
+	validates :street, :number, :CEP, :city, :uf, presence: true
 
   def json_object
     {
