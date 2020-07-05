@@ -352,27 +352,27 @@ paths:
           $ref: "#/components/responses/NotFound"
         "422":
           $ref: "#/components/responses/BadParameters"
-  /transactions/{uuid}:
-    delete:
-      summary: Cancela agendamentos
-      tags:
-        - Transações
-      parameters:
-        - $ref: "#/components/parameters/Authorization"
-        - $ref: "#/components/parameters/uuid"
-      responses:
-        '204':
-          description: No content
-        '400':
-          $ref: "#/components/responses/GenericError"
-        '401':
-          $ref: "#/components/responses/UnauthorizedOperation"
-        '403':
-          description: Forbidden
-        '404':
-          $ref: "#/components/responses/NotFound"
-        "422":
-          $ref: "#/components/responses/BadParameters"
+  # /transactions/{uuid}:
+  #   delete:
+  #     summary: Cancela agendamentos
+  #     tags:
+  #       - Transações
+  #     parameters:
+  #       - $ref: "#/components/parameters/Authorization"
+  #       - $ref: "#/components/parameters/uuid"
+  #     responses:
+  #       '204':
+  #         description: No content
+  #       '400':
+  #         $ref: "#/components/responses/GenericError"
+  #       '401':
+  #         $ref: "#/components/responses/UnauthorizedOperation"
+  #       '403':
+  #         description: Forbidden
+  #       '404':
+  #         $ref: "#/components/responses/NotFound"
+  #       "422":
+  #         $ref: "#/components/responses/BadParameters"
   /orders:
     post:
       summary: Submete um pedido
@@ -450,7 +450,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         '422':
           $ref: "#/components/responses/BadParameters"
-  /deposit:
+  /deposits:
     post:
       summary: Adiciona dinheiro a si mesmo.
       tags:
@@ -468,6 +468,10 @@ paths:
           description: ok
         '401':
           $ref: "#/components/responses/UnauthorizedOperation"
+        '409':
+          description: Conflict
+        '422':
+          $ref: "#/components/responses/BadParameters"
 components:
   responses: 
     GenericError:

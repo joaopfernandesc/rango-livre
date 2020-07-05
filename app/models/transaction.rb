@@ -69,7 +69,7 @@ class Transaction < ApplicationRecord
 	
 	def send_text_message(content, phone_number)
 		HTTP.headers("X-API-TOKEN".to_sym => ENV["ZENVIA_TOKEN"]).post("https://api.zenvia.com/v1/channels/whatsapp/messages", :json => {
-			from: "beryl-ixora",
+			from: ENV["ZENVIA_NAME"],
 			to: phone_number,
 			contents: [
 				{
