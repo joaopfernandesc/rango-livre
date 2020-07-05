@@ -18,14 +18,13 @@ class TransactionsController < ApplicationController
 				to_transaction[:from_CPF] = from_user[:CPF]
 				to_transaction[:transaction_type] = 0
 				
-				Rails.logger.info to_transaction.errors.messages
 				raise RangoLivreExceptions::BadParameters if (!to_transaction.valid?) || (params[:scheduled] == true && timestamp.nil?)
 				to_transaction.save!
 				from_transaction.save!
 				from_user.update(regular_balance: user[:regular_balance] - params[:amount].to_f)
-				if params[:account_type] = 0
+				if params[:account_type].to_i = 0
 					to_user.update(regular_balance: user[:regular_balance] + params[:amount].to_f)
-				elsif 
+				elsif params[:account_type].to_i = 1
 					to_user.update(meal_allowance_balance: user[:meal_allowance_balance] + params[:amount].to_f)
 				else
 					raise RangoLivreExceptions::BadParameters
