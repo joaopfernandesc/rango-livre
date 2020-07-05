@@ -1,5 +1,5 @@
 class DepositsController < ApplicationController
-  before_action :authenticated
+  before_action :authorized
 
   def create
     begin
