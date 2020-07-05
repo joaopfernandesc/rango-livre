@@ -43,7 +43,6 @@ class TransactionsController < ApplicationController
 		rescue => e
 			Rails.logger.error e.message
 			Rails.logger.error e.backtrace.join("\n")
-			render status: 500
 		end
 	end
 	def index
@@ -67,7 +66,6 @@ class TransactionsController < ApplicationController
 		rescue => e
 			Rails.logger.error e.message
 			Rails.logger.error e.backtrace.join("\n")
-			render status: 500
 		end	
 	end
 	def destroy
@@ -87,7 +85,6 @@ class TransactionsController < ApplicationController
 		rescue => e
 			Rails.logger.error e.message
 			Rails.logger.error e.backtrace.join("\n")
-			render status: 500
 		end
 	end
 

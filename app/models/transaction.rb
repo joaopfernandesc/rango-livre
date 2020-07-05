@@ -61,7 +61,7 @@ class Transaction < ApplicationRecord
 		if self.scheduled
 			message += "\nAgendado para #{Time.at(self.timestamp).strftime("%d/%B/%Y")}"
 		end
-		message += "\n \nValor atual Mercado Pago: R$ #{user[:regular_balance]}"
+		message += "\n \nValor atual Mercado Pago: #{user[:regular_balance]}"
 		message += "\nValor atual Mercado Vale: R$ #{user[:meal_allowance_balance]}"
 
 		return message

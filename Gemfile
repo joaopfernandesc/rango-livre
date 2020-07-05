@@ -23,6 +23,7 @@ gem 'carrierwave', '~> 2.0'
 gem 'aws-sdk'
 gem 'fog-aws'
 gem 'http'
+gem 'money'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'

@@ -16,12 +16,8 @@ class ApplicationController < ActionController::API
   def decoded_token
     if auth_header
       token = auth_header.split(' ')[1]
-      # header: { 'Authorization': 'Bearer <token>' }
-      begin
-        JWT.decode(token, ENV['SECRET_JWT'], true, algorithm: 'HS256')
-      rescue JWT::DecodeError
-        render status: 400
-      end
+      Rails.logger.info token
+      JWT.decode(token, ENV['SECRET_JWT'], true, algorithm: 'HS256')
     end
   end
 
@@ -37,6 +33,15 @@ class ApplicationController < ActionController::API
   end
 
   def authorized
-    render json: { message: 'Unauthorized token' }, status: :unauthorized unless logged_in?
+    begin
+      logged_in?    
+    rescue JWT::VerificationError
+      render json: {error: 'Unauthorized token'},status: 401
+    rescue JWT::DecodeError
+      render status: 400
+    rescue => e
+      Rails.logger.error e.message
+      Rails.logger.error e.backtrace.join("\n")
+    end
   end
 end
