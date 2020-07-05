@@ -10,7 +10,7 @@ class DepositsController < ApplicationController
       raise RangoLivreExceptions::UnauthorizedOperation if @user.nil?
       amount = params[:amount]
       Transaction.transaction do
-        @user.update(regular_balance: @user[:regular_balance] + amount)
+        @user.update(regular_balance: @user[:regular_balance] + amount.to_f)
         transaction = Transaction.create(
           amount: amount,
           transaction_type: 0,
