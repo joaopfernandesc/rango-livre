@@ -16,6 +16,8 @@ class TransactionsController < ApplicationController
 				from_transaction[:from_CPF] = from_user[:CPF]
 				from_transaction[:transaction_type] = 1
 				to_transaction[:responsible_id] = to_user[:id]
+				to_transaction[:scheduled] = params[:scheduled]
+				to_transaction[:timestamp] = params[:timestamp]
 				to_transaction[:from_CPF] = from_user[:CPF]
 
 				raise RangoLivreExceptions::BadParameters if (!to_transaction.valid?) || (params[:scheduled] == "true" && params[:timestamp].nil?)
