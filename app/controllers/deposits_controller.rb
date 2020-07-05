@@ -2,7 +2,8 @@ class DepositsController < ApplicationController
   def create
     begin
       params.permit(:amount)
-
+      
+      raise RangoLivreExceptions::UnauthorizedOperation if @user.nil?
       amount = params[:amount]
       Transaction.transaction do
         @user.update(regular_balance: @user[:regular_balance] + amount)
@@ -21,6 +22,8 @@ class DepositsController < ApplicationController
       end
 
       render json: { user: @user.json_object }
+    rescue RangoLivreExceptions::UnauthorizedOperation
+      render json: { error: 'Unauthorized token' }, status: 401
     rescue JWT::ExpiredSignature
       render json: { error: 'Expired token' }, status: 401
     rescue RangoLivreExceptions::CreateConflict
