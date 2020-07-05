@@ -18,6 +18,7 @@ class TransactionsController < ApplicationController
 				to_transaction[:from_CPF] = from_user[:CPF]
 				to_transaction[:transaction_type] = 0
 				
+				Rails.logger.info to_transaction.errors.messages
 				raise RangoLivreExceptions::BadParameters if (!to_transaction.valid?) || (params[:scheduled] == true && timestamp.nil?)
 				to_transaction.save!
 				from_transaction.save!
