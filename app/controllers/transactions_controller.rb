@@ -26,7 +26,7 @@ class TransactionsController < ApplicationController
 				from_user.update(regular_balance: @user[:regular_balance] - params[:amount].to_f) if params[:scheduled]
 				if (params[:account_type]).to_i == 0 && params[:scheduled] == false
 					to_user.update(regular_balance: to_user[:regular_balance] + params[:amount].to_f)
-				elsif (params[:account_type]).to_i == 1 (params[:account_type]).to_i == 0 && params[:scheduled] == false
+				elsif (params[:account_type]).to_i == 1 && params[:scheduled] == false
 					to_user.update(meal_allowance_balance: to_user[:meal_allowance_balance] + params[:amount].to_f)
 				end
 			end
