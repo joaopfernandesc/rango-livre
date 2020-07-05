@@ -55,16 +55,8 @@ class Transaction < ApplicationRecord
 	
 	def mount_content(user)
 		message = "Olá!\n"
-		if self.transaction_type == 0
-			message += "Crédito em conta "
-		elsif self.transaction_type == 1
-			message += "Débito em conta "
-		end
-		if self.account_type == 0
-			message += "Mercado Pago"
-		elsif self.account_type == 1
-			message += "Mercado Vale"
-		end
+		message += "#{self.transaction_type} em conta "
+		message += self.account_type
 		message += " no valor de R$ #{amount}"
 		if self.scheduled
 			message += "\nAgendado para #{Time.at(self.timestamp).strftime("%d/%B/%Y")}"
