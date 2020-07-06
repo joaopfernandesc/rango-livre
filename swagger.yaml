@@ -241,6 +241,10 @@ paths:
             schema:
               allOf:
                 - $ref: "#/components/schemas/CreateTransaction"
+                - type: object
+                  properties:
+                    regular_balance:
+                      type: number
                 - required:
                   - amount
                   - transaction_type
