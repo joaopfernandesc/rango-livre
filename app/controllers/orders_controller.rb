@@ -8,7 +8,6 @@ class OrdersController < ApplicationController
       products = Product.where(uuid: uuid_products)
 
       raise RangoLivreExceptions::NotFound if products.count != uuid_products.size
-      raise RangoLivreExceptions::CreateConflict if products.select(:restaurant).distinct.pluck(:restaurant).size != 1
 
       restaurant_name = products.first[:restaurant]
 
