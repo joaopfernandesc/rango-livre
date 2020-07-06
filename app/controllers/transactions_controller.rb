@@ -21,7 +21,7 @@ class TransactionsController < ApplicationController
 				to_transaction[:from_CPF] = from_user[:CPF]
 
 				raise RangoLivreExceptions::BadParameters if (!to_transaction.valid?) || (params[:scheduled] == "true" && params[:timestamp].nil?)
-				from_user.update(regular_balance: @user[:regular_balance] - params[:amount].to_f) if params[:scheduled]
+				from_user.update(regular_balance: @user[:regular_balance] - params[:amount].to_f) if params[:scheduled] == "true" || params[:scheduled] == true
 				if (params[:account_type]).to_i == 0 && params[:scheduled] == false
 					to_user.update(regular_balance: to_user[:regular_balance] + params[:amount].to_f)
 				elsif (params[:account_type]).to_i == 1 && params[:scheduled] == false
