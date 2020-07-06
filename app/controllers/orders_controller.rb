@@ -44,7 +44,7 @@ class OrdersController < ApplicationController
         OrderProduct.create(order_products)
       end
 
-      render json: {order: order.json_object}, status: 201
+      render json: {order: order.json_object, regular_balance: @user[:regular_balance], meal_allowance_balance: @user[:meal_allowance_balance]}, status: 201
     rescue RangoLivreExceptions::NotFound
       render json: { error: 'Not Found' }, status: 404
     rescue RangoLivreExceptions::CreateConflict
