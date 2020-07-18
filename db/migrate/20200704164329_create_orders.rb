@@ -1,7 +1,7 @@
 class CreateOrders < ActiveRecord::Migration[6.0]
   def change
     create_table :orders do |t|
-      t.string :uuid, :default => SecureRandom.uuid
+      t.string :uuid
       t.float :price
       t.string :name
       t.string :products_id

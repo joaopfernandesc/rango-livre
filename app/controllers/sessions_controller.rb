@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
       expire_timestamp = (Time.now + 4.hour).to_i
       token = encode_token({ uuid: user[:uuid], exp: expire_timestamp })
     end
-    Rails.logger.info token
+    
     render json: { token: token, expire_timestamp: expire_timestamp, user: user.json_object }, status: 200
   rescue RangoLivreExceptions::UnauthorizedOperation
     render json: { error: 'Incorrect user/password combination' }, status: 401

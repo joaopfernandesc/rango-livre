@@ -1,4 +1,10 @@
 class Order < ApplicationRecord
+  before_create :set_uuid
+
+  def set_uuid
+    self.uuid = SecureRandom.uuid
+  end
+  
 
   def json_object
     ids_products = OrderProduct.where(order_id: self.id)
